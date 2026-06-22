@@ -150,9 +150,19 @@ For events that to notify 1 user, we can reduce the sql query to collecting the 
 
 Designing to align with the delivery policy, the user preferences will need to be reviewed for these cases. We'll make it so the user preferences to determine delivery channels for social and informational notifications. Security notifications may bypass user preferences to ensure important account events are communicated.
 
+We also need a place to store our delivery policies. Policies may be needed elsewhere in the app service we're building on, but for now since we're concerned with just delivery policies, lets build it into our API server. In the future, we can think about moving this out, but having this in the API server allows us to quickly retrieve the policies and avoid unecessary network calls while keeping the design simple. 
+
+If deployments are blocking policy updates, we can opt to use databse-backed configuration tables with validation, audit logs and caching. Seperate services for policies can be left until we definitely know that shared policies are needed across multiple systems as this adds complexity and effort.
+
+Another benefit of keeping our policies in the API server is simpler testing and version control. 
+
 In the server, we can add the "important notification" delivery policy by creating a message with the email preference for the user, after collecting that user from the database to ensure they exist first, get their email, and any other information we require to send the email.
 
-We'll also have to consider the Objects of the app. In our database, we'll be storing comments, user type (user, creator), posts, etc. Based on the event, we should have queries to obtain users to notify with the event.
+A similar method for gathering the users to deliver to when there's few or many can be done, creating queries to handle events where we need to gather based on the information the event has provided us from the app service.
+
+As such, the notification system should not always determine recipients from scratch. For simple events, the producer service can include recipient_ids. For fan-out events, such as creator.stream_started, the notification service can run recipient resolution using follower/subscriber data. This avoids unnecessary work and keeps the system flexible.
+
+This means we'll also have to consider the Objects of the app. In our database, we'll be storing comments, user type (user, creator), posts, etc. Based on the event, we should have queries to obtain users to notify with the event.
 
 ## V6:
 Since we're working ontop of an existing app, we might have useful context that comes in from the product service (the app). For example:
@@ -169,6 +179,7 @@ Since we're working ontop of an existing app, we might have useful context that 
 We can reduce the work the DBMS needs to do as we have the recipient ids, and just collect the preferences for that. Since we also have notification types that need to be prioritised with regards to the delivery policy some notifications require, we can acommodate for that too, having a check for the type of notification and applying the necessary values such as adding email preference type.
 
 ## V7:
+![alt text](v7.png)
 The bottleneck moves to the queue and notification sending server, as they'll be responsible for working all types of notifications. We can have parallel working services for each type of notification delivery option, such as workers. Splitting up the notification sending server so that each function is in their own, and having them long living lets us achieve part of the parallel setup.
 
 We can also do this for the queues, having each queue responsible for a channel which is responsible for sending a notification type. This allows increased isolation, throughput control, observability benefits, and independent scaling for each queue. Since total volume is more related to the cost, rather than amount of queues, we can leverage having these parallel system to reduce time and customising policies for each queue based on what the channel delivers. This does come at the cost of operational complexity, and depending compute costs with long running workers, however it is a trade-off worth considering if the system starts to show bottlenecking with delivering notifications. 
