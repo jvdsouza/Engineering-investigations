@@ -73,6 +73,8 @@ The issue still lies in the API having to finish each call before each iteration
 
 ## V4:
 ![alt text](image.png)
+Earlier versions assumed all notifications fan out to all users. The domain knowledge of where this platform would be implemented clarified places where optimisations could take place. Recipient resolution becomes the primary optimisation, as the amount of users to to target delivery of a notification from an event to becomes much clearer.
+
 We can take the load off the API processing the preference by offloading the work into an asynchronous process and another service. We can use a queue service and another server to handle this, freeing up the API server.
 
 Queue services can be from cloud services or in bespoke services, its main function is to collect the messages with the `user_id` and required information. The notification sending server can be very small, as it only needs to recieve the information and process each message through the method the preference requires, so a serverless function can fit.
@@ -190,3 +192,111 @@ We could consider using a cache in front of the database, but this can be an iss
 Further optimisations would include scaling up the notification sending services with replicas since that would be where the current load looks where it could be. This would move the bottleneck into the queue service, as only 1 queue is sending messages to more than 1 server. Since each message holds its own state, it's not an issue to determine which queue a message gets sent to. This can be done to handle inceased traffic, hotspots, manage failures.
 
 For further scaling, using a load balancer to route to replicas of API servers, routing to the read replica databases. Automatic sharding for relational databases can be utilised through cloud services as well to improve the speeds we can read data in to the notification process.
+
+
+## Design approach improvements
+Mission:
+- Find what NEEDS to be done and leave what DOESN't need to be done right now
+- Find this system's context and needs as if it exists in the real world
+
+Domain modelling:
+- Currently the system is designed as:
+  - Event -> Preferences -> Queue -> Channel
+- System could be designed under a different model:
+  - Event -> Notification -> Delivery
+
+For domains you havent seen before, try to extract it:
+- Start with verbs, ie what states are happening?
+  - What happens?
+- Example: notifications:
+  - comment created
+  - stream started
+  - password changed
+  - notifications sent
+  - notification read
+  - delivery failed
+- Find of the nouns and brainstorm the abstracted versions
+  - Comment
+  - Stream
+  - PasswordChange
+  - Notification
+  - Delivery
+  - User
+  - Channel
+  - Preference
+- Seperate "something happened" from "we did something"
+  - Event = something happened (in the product/outside system sending message to us)
+  - Notification = we create a message/state for a user
+  - Delivery = we attempt to send that notification through a channel
+  - Seperation comes from asking if it's the:
+    - cause
+    - user-visible record
+    - side effect
+- Ask lifecycle questions:
+  - For each noun ask:
+    - who creates it?
+    - who reads it?
+    - can it fail?
+    - can it be retried?
+    - can it be deleted?
+    - does it have status?
+    - does it need history?
+  - Example:
+    - A delivery can be:
+      - pending -> sent -> failed -> retrying -> dead_lettered
+- Find one-to-many relationships
+  - One Event may create many Notifications
+  - one Notification may create many Deliveries
+  - One User may have many Preferences
+  - One Channel may have many DeliveryAttempts
+- Create smallest model first
+  - User
+  - Preference
+  - Event
+  - Notification
+  - Delivery
+  - Channel
+- Evolve the model
+  - Question it
+    - What feels awkward
+    - Where is retrying hard
+    - Where are duplicates hard
+    - What is missing from what we found? What feels hard to implement?
+- Reusable domain modelling prompt:
+  - What happened?
+  - Who cares/who would want to know?
+  - What user-visible objects are created?
+  - What actions occur due to it?
+  - Which of these is allowed to fail independently?
+  - Which of these needs status/history?
+  - Where are the one-to-many relationships
+  - Where is the source of truth for each of these?
+
+Product intent with preferences and importance of notifications:
+- Prefer to use language that aligns with 'following policies' over 'overriding'
+
+Database and information optimising:
+- Consider if we need to do any work at all first
+- Given we get recipient id's, do we need to do any work at all?
+- Maybe underlying app already did do work regarding collecting information already
+- Can we avoid another dependency this way?
+
+Total work with async responsibility channels:
+- Total work doesn't change
+- What has improved is:
+  - Isolation
+  - Scalability
+  - Retry behavious
+  - Failure containment
+  - Observability
+Further scaling:
+- Talk about bottlenecks, then say what can be done
+
+## What was "done well"
+- structured thinking
+- iterative design
+- bottleneck identification
+- willingness to revisit assumptions
+- understanding of asynchronous processing
+- understanding of recipient resolution
+- understanding of channel-specific scaling
