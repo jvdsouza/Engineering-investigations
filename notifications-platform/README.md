@@ -78,8 +78,6 @@ We can take the load off the API processing the preference by offloading the wor
 Queue services can be from cloud services or in bespoke services, its main function is to collect the messages with the `user_id` and required information. The notification sending server can be very small, as it only needs to recieve the information and process each message through the method the preference requires, so a serverless function can fit.
 
 ## V5:
-
-
 If not all events fan out to all users, then lets resolve recipients and then create the deliveries.
 
 If we're building on top of an existing app, we can use the context of the app to refine what events exist, and reduce the information regarding what users the work is done for.
@@ -122,6 +120,11 @@ We can expect events to support notifications in various ways:
     - creator_content_flagged
     - system_announcement
 
+We can use this to help seperate some concepts: 
+- The Event: When something happens which we need to handle
+- Notification: The user-viewed record of the event
+- Delivery: The attempt of sending the information through a channel, in order to create the notification
+  
 This could change how we want to access our data. First, we recieve an event. This event should be described in our service with its priority and any rules it requires.
 
 There's a few events that only require 1 user, such as those in social, transactional, security, and moderation types of notifications:
@@ -145,14 +148,14 @@ Right now, our system handles events that notifies all users. Lets see what we c
 
 For events that to notify 1 user, we can reduce the sql query to collecting the preferences for that user. However, there's some high priority cases, such as in the transactional security/account type of notification (ie `password_changed) where they should get an email irregardless of if they've opted in to email notifications.
 
-Designing to override the user preferences will need to be done for these cases. We'll make it so the user preferences to determine delivery channels for social and informational notifications. Security notifications may bypass user preferences to ensure important account events are communicated.
+Designing to align with the delivery policy, the user preferences will need to be reviewed for these cases. We'll make it so the user preferences to determine delivery channels for social and informational notifications. Security notifications may bypass user preferences to ensure important account events are communicated.
 
-In the server, we can override the preferences by creating a message with the email preference for the user, after collecting that user from the database to ensure they exist first, get their email, and any other information we require to send the email.
+In the server, we can add the "important notification" delivery policy by creating a message with the email preference for the user, after collecting that user from the database to ensure they exist first, get their email, and any other information we require to send the email.
 
 We'll also have to consider the Objects of the app. In our database, we'll be storing comments, user type (user, creator), posts, etc. Based on the event, we should have queries to obtain users to notify with the event.
 
 ## V6:
-Since we're working ontop of an existing app, we might have useful context that comes in from the client (the app). For example:
+Since we're working ontop of an existing app, we might have useful context that comes in from the product service (the app). For example:
 ```
 {
     "event_type": "comment.created",
@@ -163,12 +166,12 @@ Since we're working ontop of an existing app, we might have useful context that 
 }
 ```
 
-We can reduce the work the DBMS needs to do as we have the recipient ids, and just collect the preferences for that. Since we also have notification types that need to override, we can acommodate for that too, having a check for the type of notification and applying the necessary values such as adding email preference type.
+We can reduce the work the DBMS needs to do as we have the recipient ids, and just collect the preferences for that. Since we also have notification types that need to be prioritised with regards to the delivery policy some notifications require, we can acommodate for that too, having a check for the type of notification and applying the necessary values such as adding email preference type.
 
 ## V7:
 The bottleneck moves to the queue and notification sending server, as they'll be responsible for working all types of notifications. We can have parallel working services for each type of notification delivery option, such as workers. Splitting up the notification sending server so that each function is in their own, and having them long living lets us achieve part of the parallel setup.
 
-We can also do this for the queues, having each queue responsible for a channel which is responsible for sending a notification type. This allows reduced work and time for each queue. Since total volume is more related to the cost, rather than amount of queues, we can leverage having these parallel system to reduce time and customising policies for each queue based on what the channel delivers. This does come at the cost of operational complexity, and depending compute costs with long running workers, however it is a trade-off worth considering if the system starts to show bottlenecking with delivering notifications. 
+We can also do this for the queues, having each queue responsible for a channel which is responsible for sending a notification type. This allows increased isolation, throughput control, observability benefits, and independent scaling for each queue. Since total volume is more related to the cost, rather than amount of queues, we can leverage having these parallel system to reduce time and customising policies for each queue based on what the channel delivers. This does come at the cost of operational complexity, and depending compute costs with long running workers, however it is a trade-off worth considering if the system starts to show bottlenecking with delivering notifications. 
 
 ## Further scaling options:
 We could consider using a cache in front of the database, but this can be an issue when handling a new user signing up. It's difficult to answer when a cache should clear based on events that are out of our control. With the current optimisation it might be better to use database read only replicas with the speed of the query to rely on.
