@@ -125,7 +125,7 @@ We can expect events to support notifications in various ways:
 We can use this to help seperate some concepts: 
 - The Event: When something happens which we need to handle
 - Notification: The user-viewed record of the event
-- Delivery: The attempt of sending the information through a channel, in order to create the notification
+- Delivery: The attempt of sending the already-created notification through a channel
   
 This could change how we want to access our data. First, we recieve an event. This event should be described in our service with its priority and any rules it requires.
 
@@ -215,7 +215,7 @@ For domains you havent seen before, try to extract it:
   - notifications sent
   - notification read
   - delivery failed
-- Find of the nouns and brainstorm the abstracted versions
+- Extract concrete nouns from the workflow, then generalise them into useful domain abstractions:
   - Comment
   - Stream
   - PasswordChange
@@ -229,9 +229,9 @@ For domains you havent seen before, try to extract it:
   - Notification = we create a message/state for a user
   - Delivery = we attempt to send that notification through a channel
   - Seperation comes from asking if it's the:
-    - cause
-    - user-visible record
-    - side effect
+    - cause/Domain Event/Something happened
+    - user-visible record/Read model/record/thing we store or display
+    - side effect/command/actions/effect/things we'll do because of it
 - Ask lifecycle questions:
   - For each noun ask:
     - who creates it?
@@ -239,8 +239,8 @@ For domains you havent seen before, try to extract it:
     - can it fail?
     - can it be retried?
     - can it be deleted?
-    - does it have status?
-    - does it need history?
+    - does it have status/lifecycle state?
+    - does it need history (audit trails, logs, versioning, artefacts)?
   - Example:
     - A delivery can be:
       - pending -> sent -> failed -> retrying -> dead_lettered
