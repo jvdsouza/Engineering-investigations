@@ -1,15 +1,26 @@
 - Product investigation
-  - I found more clarity around scoping work for a V1.
-  - I thought there was a lot more to do, but there's limits for deliverables in functional and non-functional requirements we can impose.
-  - Scope creep can literally creep in. Be aware of what is needed and what is nice to have.
-  - Writing this all out really opened me up to what I don't know when I need to talk and explain it in a context.
-  - It's important to find ways that give me the energy to move through this work, rather than trying to force myself to do another course.
+  - I found more clarity around scoping work for a V1
+  - I thought there was a lot more to do, but there's limits for deliverables in functional and non-functional requirements we can impose
+  -  How fast do we want it to be? What's reasonable? It can be hard to say a precise number, giving a magnitude of the measure is a good idea
+  - Scope creep can literally creep in, be aware of what is needed and what is nice to have.
+  - Also should consider what needs to be down NOW with the system, and what can be done later. Critical paths lead the initial design.
+  - Writing this all out really opened me up to what I don't know when I need to talk and explain it in a context
+  - It's important to find ways that give me the energy to move through this work, rather than trying to force myself to do another course
 
 - System design
   - Really ask about the context, how is this fitting in a real world scenario?
+  - Ask about the information we're getting into the system, is any of it usable for us to avoid adding work in our system?
   - Prioritise avoiding having the system do work before optimising the effort to do the work
+  - Solve for now, leaving the design to evolve for tomorrow
+  - Avoiding work on the database beats optimising the query 
   - Stop work processes as early as possible
-  - Notifications are not both the delivery and the notification, splitting up action and object is important. Observing the Delivery and the Notification seperately clarified the domain model.
+  - Notifications are not both the delivery and the notification, splitting up action and object is important. Observing the Delivery and the Notification seperately clarified the domain model
+  - We can seperate the same process based on its functional differences, such as seperating the delivery of notifications to a sms channel, in-app channel, etc
   - Unknown domains can be approached, questioning what it needs to do, the information it uses and abstracting them to constructs can give us an idea on how to approach handling aspects of the domain.
   - Language is important for talking about user added data. We don't override, but rather we apply policies to ensure usability and serving needs for the situation.
   - Having async channels for the delivery methods doesnt reduce total work, but allows isolation and customisation on each channel.
+
+- DS/A investigation
+  - As I learn more on how to approach problems, the more I can condense my information, being more concise
+  - Hash Maps and Sets are great for accessing an item when we know the key, MinHeaps can help us if we need to access based on the lowest value
+    - MaxHeaps would be the alternative, for access on the largest value item
