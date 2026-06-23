@@ -105,4 +105,25 @@ Users = {
 }
 ```
 Batching by channel is a grouping problem. After resolving recipients and allowed channels, create delivery jobs and group them by channel using a map. This allows downstream workers to process channel-specific batches without knowing how recipients, preferences, or policies were resolved.
----brain stopped here---
+
+## How do we order retries?
+This is focused on the delivery attempt. Given many failed delivery jobs, which one should we retry next?
+
+The DeliveryJob has been assigned this structure:
+
+```typescript
+type DeliveryJob = {
+    notification_id
+    recipient_id
+    channel
+    payload
+    attempt_count
+    next_retry_at
+    status
+    last_error
+}
+```
+
+DeliveryJob has an attempt_count and a next_retry_at attributes. We're focused on *which* notification to retry next, not when. Keep `attempt_count <= 2` so we retry once.
+
+Given we have split parallel channels, each worker doesn't need to worry about priority among other delivery channels, but they do have varying retry times due to event types having varied TTLs from delivery policies. This is similar to finding the TTL for cleanup for deduplication. We can order these jobs by `next_retry_at` with a MinHeap implementation, inserting/deleting at O(log n), and accessing at O(1). This is also known as a Priority Queue if we talk about its role.
