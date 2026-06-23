@@ -90,23 +90,19 @@ We'll need to create a job for each user, and make versions for each channel.
 
 We could iterate through the recipients and the data we need to send, but if we change the lookup to be prioritised by channel that makes it easier
 
-We can model the database result by using `ORDER BY` with `WHERE` and taking advantage of the indexing.
+We can get who we really need to notify with `WHERE IN` with at least one valid channel.
 
 Everything else should stay the same, and we can iterate through the users and apply policies much easier as now the preference is the key.
 
 ```
 event_type = "creator.stream_started"
-policy = { defaultChannels: ["in_app", push], requiredChannels: [] }
+policy = { defaultChannels: ["in_app", "push"], requiredChannels: [] }
 
 Users = { 
     in_app: [...], 
     push: [...], 
     email: [...] // discard
 }
-
-result = ["in_app"]
 ```
-
-We can even cut down on the work done with the database so we only collect based on the default and required channels, meaning we dont have to prune and just get what we need.
-
+Batching by channel is a grouping problem. After resolving recipients and allowed channels, create delivery jobs and group them by channel using a map. This allows downstream workers to process channel-specific batches without knowing how recipients, preferences, or policies were resolved.
 ---brain stopped here---

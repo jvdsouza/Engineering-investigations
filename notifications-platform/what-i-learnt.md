@@ -1,0 +1,15 @@
+- Product investigation
+  - I found more clarity around scoping work for a V1.
+  - I thought there was a lot more to do, but there's limits for deliverables in functional and non-functional requirements we can impose.
+  - Scope creep can literally creep in. Be aware of what is needed and what is nice to have.
+  - Writing this all out really opened me up to what I don't know when I need to talk and explain it in a context.
+  - It's important to find ways that give me the energy to move through this work, rather than trying to force myself to do another course.
+
+- System design
+  - Really ask about the context, how is this fitting in a real world scenario?
+  - Prioritise avoiding having the system do work before optimising the effort to do the work
+  - Stop work processes as early as possible
+  - Notifications are not both the delivery and the notification, splitting up action and object is important. Observing the Delivery and the Notification seperately clarified the domain model.
+  - Unknown domains can be approached, questioning what it needs to do, the information it uses and abstracting them to constructs can give us an idea on how to approach handling aspects of the domain.
+  - Language is important for talking about user added data. We don't override, but rather we apply policies to ensure usability and serving needs for the situation.
+  - Having async channels for the delivery methods doesnt reduce total work, but allows isolation and customisation on each channel.
