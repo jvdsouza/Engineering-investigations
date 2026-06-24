@@ -22,12 +22,20 @@
   - Having async channels for the delivery methods doesnt reduce total work, but allows isolation and customisation on each channel.
   - Workers are not a technology, rather a role, aimed to complete specific tasks, and in this design very useful for carrying out each channel's delivery method
     - There could be other constructs that we can leverage with this idea of isolation and responsibility
+  - Approaching designing with these questions makes the process less ambiguous:
+      1. What problem exists?
+      2. Whats our data and what operations need to happen?
+      3. What behaviour solves that problem?
+      4. What implementation provides that behaviour?
+      5. What trade-offs does that implementation make?
 
 ## DS/A investigation
   - As I learn more on how to approach problems, the more I can condense my information, being more concise
   - Hash Maps and Sets are great for accessing an item when we know the key, MinHeaps can help us if we need to access based on the lowest value
     - MaxHeaps would be the alternative, for access on the largest value item
   - Similar to the Workers in the System Design part, there's a role and implementation seperation in DS/A. Priority queues to order retries based on a `next_retry_at` `datetime` value can be implemented through a MinHeap.
+  - Approaching with `Problem -> Behaviour -> Implementation -> trade-offs` makes these questions much more manageable, like it does with system design
+    - ![alt text](general-solution-framework.png)
 
 # My Assumptions that were challenged
 (or "Things I was wrong about")

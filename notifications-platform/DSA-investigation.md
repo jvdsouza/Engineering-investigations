@@ -127,3 +127,32 @@ type DeliveryJob = {
 DeliveryJob has an attempt_count and a next_retry_at attributes. We're focused on *which* notification to retry next, not when. Keep `attempt_count <= 2` so we retry once.
 
 Given we have split parallel channels, each worker doesn't need to worry about priority among other delivery channels, but they do have varying retry times due to event types having varied TTLs from delivery policies. This is similar to finding the TTL for cleanup for deduplication. We can order these jobs by `next_retry_at` with a MinHeap implementation, inserting/deleting at O(log n), and accessing at O(1). This is also known as a Priority Queue if we talk about its role.
+
+## How do we show unread and read notifications?
+This is about the in-app notifications, how should the system represent and retrieve notification state for the user?
+
+Lets consider what the platform wants to show. If we want to show it in two pools for read and unread, lets have the unread at the top and read at the bottom on the user's notification screen.
+
+```
+Unread notification 1
+Unread notification 2
+------------------
+Read notification 1
+Read notification 2
+```
+Lets consider having the data including:
+```
+id
+user_id
+created_at
+read_at (nullable)
+```
+Users can read, mark unread and delete notifications as some actions for now.
+
+We can store the read status in the `read_at` field, and collect read notifications `WHERE read_at IS NOT NULL`, and `ORDER BY read_at DESC` as well.
+
+We can use `created_at` for ordering notifications that are unread, `WHERE read_at IS NULL` to collect them.
+
+How important is it for us to know the notification has been read? Comparitively to the other processes, not a huge amount. Some eventual consistency can be allowed.
+
+We can use queues to handle actions with a hook on the actions to update the system's source of truth/database when the app can send messages back to the system.
