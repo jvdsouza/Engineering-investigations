@@ -1,0 +1,23 @@
+{
+  "name": "engineering-investigations",
+  "version": "1.0.0",
+  "description": "To learn to design systems and understand Data Structures and Algorithms from how they apply to real world scenarios, with ChatGPT as a thinking partner.",
+  "homepage": "https://github.com/jvdsouza/Engineering-investigations#readme",
+  "bugs": {
+    "url": "https://github.com/jvdsouza/Engineering-investigations/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jvdsouza/Engineering-investigations.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

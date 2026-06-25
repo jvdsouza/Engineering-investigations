@@ -13,7 +13,7 @@ A user wishes to alert one or many people on something that has occured. There i
 - A user turns notifications off
 - A user chooses one or more platforms to recieve notifications
 
-## Function Requirements
+## Functional Requirements
 -  The system must be able to receive an event
 -  The system must be able to identify the recipients a notification goes to
 -  The system must respect a user's notification preferences

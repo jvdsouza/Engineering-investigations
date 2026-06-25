@@ -4,7 +4,7 @@ Fast lookup
 Need uniqueness
 - Set
 
-Need ordering
+Need ordering/Ordered access
 - Queue
 
 Need smallest/largest item
