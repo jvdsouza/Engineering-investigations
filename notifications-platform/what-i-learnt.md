@@ -63,3 +63,4 @@ This lead to me asking the question "How do we find the the events we've stored 
 Naturally, this lead to "Using a MinHeap". The relation exists, I just had to find the question to ask first.
 
 The most important discovery was that I did not need to know a MinHeap beforehand. I needed to understand the problem well enough to ask what information was important to access quickly. Once I realised I needed the earliest expiry time, a MinHeap became a natural candidate. The data structure was a consequence of the problem rather than the starting point.
+
