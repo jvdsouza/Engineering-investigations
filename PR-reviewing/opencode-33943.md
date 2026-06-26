@@ -55,5 +55,15 @@ The intial model seems to be:
     - Timeline Messages get loaded in, waited for to render, and the scroll then occurs
 
 ## Architecture Graph (Optional)
-
+session.tsx passes state for position and messages
+↓ 
+message-timeline.tsx renders the timeline and position of the messages through the DOM content
+↓ 
+use-session-hash-scroll.tsx decides where and if to scroll
+↓ 
+layout-scroll.ts updates the scroll position anchor and caches with session key for next time, and scrolls to location
 ## Review
+
+## Improvements for next time
+- Enter/Exit state per file
+- Seperate hypothesis from fact (ie “Hypothesis: the session key/hash is used to identify a target message or scroll position.”)
