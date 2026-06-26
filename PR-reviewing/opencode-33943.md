@@ -5,14 +5,55 @@
 session-timeline.fixture.ts | smoke test file giving fixtures for the session timeline. Session timeline includes message and when it was created
 session-timeline.spec.ts | actual tests using the fixtures
 layout-scroll.test.ts | unit tests for layout-scroll.ts
-layout-scroll.ts | functions that define behaviours involving scrolling
-message-timeline.tsx | component responsible for displaying and how the timeline should behave 
-use-session-hash-scroll.ts | behaviours that define how the scroll should work given a session hash/how it should scroll given context of a session 
+layout-scroll.ts | functions that coordinates behaviours involving scrolling
+message-timeline.tsx | component responsible for rendering messages and the timeline interactions
+use-session-hash-scroll.ts | behaviours that coordinates how the scroll should work given a session hash/how it should scroll given context of a session 
 session.tsx | top level component that contains the state of the current session and defines the behaviour of a session
 ## What are the main abstractions?
-
+- Session
+    - Hash
+    - Behaviour
+- Timeline
+    - Events
+- Scroll Behaviour
+- Layout
+    - Behaviour
+- Message
 ## What state exists?
-
+- Session
+    - Hash/SessionKey
+- Messages
+    - Message
+        - Timestamp
+        - Hash
+        - Position
+- Scroll
+    - Position
+    - State
 ## What enters this file?
-
+- SessionKey and Initial SessionKey
+- Timeline Message(s)
+- Message List
+- Key down events
+- Scroll Check Outcomes (ie shouldAnchorBottom, onCancelScrollRestore)
+- Scroll Position
+- Scroll State
+- Tab
 ## What leaves this file?
+- Rendered JSX
+    - Messages
+    - Layout
+    - Timeline
+- Position to scroll to if needed
+- Scrolling Event/Action
+## Initial Mental Model
+The intial model seems to be:
+- Obtain session key and its state
+    - This has information that will define the message to scroll to, which has the position to scroll to (via Hash)
+    - Messages have their own position information
+    - Timeline contains messages
+    - Timeline Messages get loaded in, waited for to render, and the scroll then occurs
+
+## Architecture Graph (Optional)
+
+## Review
