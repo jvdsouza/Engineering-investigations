@@ -1,0 +1,55 @@
+PR review:
+- Large files
+	- How do i digest them?
+	- Picking out pieces of information - adhd and skipping over potential issues (ie `sql.raw`, `string.replace`)
+	- Building playbook for what to look for
+	- Am I focused too much on the connections rather than the active pieces?
+		- expressions
+		- side effect calls
+- Code trust
+	- Am I too trustful because of who has written or updated the code?
+    - How can I fit the role of the creator and reviewer?
+    - What is the mindset of the more experienced, and is it just because theyve seen so many or is it an emotional component? How do I intuit and adopt the appropriate approach to create the behaviour that results in a successful PR outcome?
+- React
+	- Re-read hooks and use them
+	- Lifecycle updates
+	- UseEffect
+	- The use of data, does it need to update?
+- Condensing my thoughts 
+	- More attempts
+	- Condensation comes from more knowledge and adding to the schema through associations 
+- Mechanical and Cognitive affecting factors
+	- How do I accommodate for myself in these situations?
+		- In person, remote
+	- How can I regulate in these situations?
+	- Live review
+		- How do I feel when being assessed
+		- How do I regulate here?
+		- How do I know whats acceptable to do? ie Taking a second to look away and psychological deep breath and sigh
+- Mindset and subject focus
+	- How do I set myself up
+	- How do I handle switching mindset
+- Remembering my framework
+	- On the fly, while thinking about the question
+	- PARA - pause answer reflect ask. How to ensure pausing has a positive correlation
+- Discussion relevance
+	- Is what i'm currently talking about relevant to the conversation and/or answering what they're asking?
+	- Am I dismissing anything?
+- Emotional state after
+	- How do I feel?
+		- Good? Bad? Derivatives? 
+		- How do I feel about myself?
+			- Don't feel too great, seeing a lot of holes in my approach and knowledge
+			- ADHD with picking out pieces of code that have issues, had to be taken through the pieces
+				- Maybe I didn't understand the structure of the PR
+				- Does that also mean I didn't understand how people think about code structure or how code is structured normally?
+				- What do I think when I create code?
+					- Current thought:
+						- Data ingest
+						- Data transform
+						- Data send off
+					- Find that sometimes these three might happen more than once in a section and in different order
+					- How does this look like in different scenarios?
+						- Node runtime with framework calling to database and other services
+						- React stateful component
+				- 

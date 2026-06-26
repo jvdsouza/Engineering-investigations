@@ -27,7 +27,7 @@ const timePolicies: TimePolicy = {
 };
 
 const applyTimePolicies = (event_data: event_data): boolean => {
-    const policy = timePolicies[event_data][event_name];
+    const policy = timePolicies[event_data.event_name];
     if (!policy) {
         return true;
     }
