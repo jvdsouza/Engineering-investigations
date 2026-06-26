@@ -54,7 +54,7 @@ The intial model seems to be:
     - Timeline contains messages
     - Timeline Messages get loaded in, waited for to render, and the scroll then occurs
 
-## Architecture Graph (Optional)
+## Behaviour Trace: restore saved timeline position
 session.tsx passes state for position and messages
 ↓ 
 message-timeline.tsx renders the timeline and position of the messages through the DOM content
