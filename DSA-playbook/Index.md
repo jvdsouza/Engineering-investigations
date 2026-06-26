@@ -15,3 +15,6 @@ Need relationships
 
 Need hierarchy
 - Tree
+
+Need all-or-nothing
+- Transactions
