@@ -9,3 +9,9 @@ Your only task is to answer:
 - What state exists?
 - What enters this file?
 - What leaves this file?
+
+For unknowns, answer:
+- Unknowns
+- Hypothesis
+- Evidence/Reality
+- Conclusion
